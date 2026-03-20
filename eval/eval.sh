@@ -54,14 +54,7 @@ if [ "$LINE_COUNT" -gt "$MAX_LINES" ]; then
     exit 0
 fi
 
-# 3. Check CUDA available
-if ! python3 -c "import torch; assert torch.cuda.is_available(), 'No CUDA'" 2>/dev/null; then
-    echo "ERROR: CUDA not available." >&2
-    summary "0.0000" "0" "6" "$LINE_COUNT" "false"
-    exit 0
-fi
-
-# 4. Verify torch_fallback.py integrity (anti-tamper)
+# 3. Verify torch_fallback.py integrity (anti-tamper)
 EXPECTED_HASH="8a10450f701f1329fe14bb57de7cac57c28fd5bfb502815ad6085ffc92b8d20a"
 ACTUAL_HASH=$(shasum -a 256 flash_kmeans/torch_fallback.py 2>/dev/null | awk '{print $1}')
 if [ -z "$ACTUAL_HASH" ]; then
@@ -73,6 +66,13 @@ if [ "$ACTUAL_HASH" != "$EXPECTED_HASH" ]; then
     echo "ERROR: torch_fallback.py has been modified (hash mismatch)." >&2
     echo "  Expected: $EXPECTED_HASH" >&2
     echo "  Actual:   $ACTUAL_HASH" >&2
+    summary "0.0000" "0" "6" "$LINE_COUNT" "false"
+    exit 0
+fi
+
+# 4. Check CUDA available
+if ! python3 -c "import torch; assert torch.cuda.is_available(), 'No CUDA'" 2>/dev/null; then
+    echo "ERROR: CUDA not available." >&2
     summary "0.0000" "0" "6" "$LINE_COUNT" "false"
     exit 0
 fi
