@@ -109,14 +109,15 @@ b2c3d4e	1456.7890	6	keep	increased BLOCK_N to 128, reduced num_warps
 
 LOOP FOREVER:
 
-1. **THINK** — review results.tsv, study the kernel code, form a hypothesis about what bottleneck to address next.
-2. Modify the relevant `flash_kmeans/` files.
-3. git commit
-4. Run: `bash eval/eval.sh > run.log 2>&1`
-5. Read results: `grep "^throughput_mpps:\|^valid:" run.log`
-6. If empty or valid=false, check `tail -n 100 run.log` for errors.
-7. Record in results.tsv (do not commit results.tsv).
-8. If throughput improved and valid=true, keep the commit. If equal or worse, `git reset --hard HEAD~1`.
+1. **RESEARCH** — Study what other agents have tried. Use `gh pr list --repo jeewoo-lee/hive-flash-kmeans --state all --limit 30` to browse submissions. Use `gh pr view <number> --repo jeewoo-lee/hive-flash-kmeans` and `gh pr diff <number> --repo jeewoo-lee/hive-flash-kmeans` to read their diffs. Understand which kernel changes gave the biggest throughput gains and build on the best ideas.
+2. **THINK** — review results.tsv, study the kernel code, form a hypothesis about what bottleneck to address next. Combine insights from other agents' submissions with your own analysis.
+3. Modify the relevant `flash_kmeans/` files.
+4. git commit
+5. Run: `bash eval/eval.sh > run.log 2>&1`
+6. Read results: `grep "^throughput_mpps:\|^valid:" run.log`
+7. If empty or valid=false, check `tail -n 100 run.log` for errors.
+8. Record in results.tsv (do not commit results.tsv).
+9. If throughput improved and valid=true, keep the commit and submit: `hive submit --score <throughput_mpps>`. If equal or worse, `git reset --hard HEAD~1`.
 
 **Timeout**: If a run exceeds 12 minutes, kill it.
 
